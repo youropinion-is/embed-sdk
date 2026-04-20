@@ -34,8 +34,8 @@
     "build": "node build.mjs && tsc -p tsconfig.build.json",
     "tsc": "tsc --noEmit",
     "test": "node --import tsx --import global-jsdom/register --test 'tests/**/*.test.ts'",
-    "test:coverage": "node --import tsx --import global-jsdom/register --test --experimental-test-coverage --test-coverage-include='src/**/*' 'tests/**/*.test.ts'",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "ci:publish": "changeset tag && pnpm publish"
   },
   "peerDependencies": {
     "react": ">=18"
@@ -46,6 +46,8 @@
     }
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "@types/react": "^19.0.0",
     "esbuild": "^0.25.0",
     "global-jsdom": "29.0.0",
