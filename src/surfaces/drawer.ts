@@ -75,6 +75,7 @@ const DRAWER_CSS = `
     animation: ${CSS_PREFIX}-peek-pulse 1.6s ease-in-out infinite;
 }
 .${CSS_PREFIX}-drawer-close {
+    all: revert;
     position: absolute;
     top: 8px;
     right: 8px;
@@ -84,6 +85,8 @@ const DRAWER_CSS = `
     border-radius: 50%;
     width: 32px;
     height: 32px;
+    padding: 0;
+    margin: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -91,6 +94,7 @@ const DRAWER_CSS = `
     color: inherit;
     font-size: 18px;
     line-height: 1;
+    box-sizing: border-box;
     transition: background 0.15s;
 }
 .${CSS_PREFIX}-drawer-close:hover {
@@ -123,107 +127,117 @@ const DRAWER_CSS = `
 }
 `;
 
-export function createDrawer(surveyId: string, options: DrawerOptions = {}): ModalHandle {
-    injectStyles(DRAWER_CSS);
+export function createDrawer(
+  surveyId: string,
+  options: DrawerOptions = {},
+): ModalHandle {
+  injectStyles(DRAWER_CSS);
 
-    const position = options.position || "right";
-    const isModal = options.modal ?? false;
+  const position = options.position || "right";
+  const isModal = options.modal ?? false;
 
-    // --- DOM shell ---
-    const overlay = document.createElement("div");
-    overlay.className = `${CSS_PREFIX}-drawer-overlay`;
-    overlay.addEventListener("click", () => handle.close());
+  // --- DOM shell ---
+  const overlay = document.createElement("div");
+  overlay.className = `${CSS_PREFIX}-drawer-overlay`;
+  overlay.addEventListener("click", () => handle.close());
 
-    const drawer = document.createElement("div");
-    drawer.className = `${CSS_PREFIX}-drawer ${CSS_PREFIX}-drawer--${position}`;
-    // Apply theme from global state: explicit dark/light via class, auto via @media fallback
-    const globalTheme = getGlobalTheme();
-    const initialResolved = resolveTheme(globalTheme);
-    drawer.classList.toggle(`${CSS_PREFIX}--dark`, initialResolved === "dark" && globalTheme !== "auto");
-    drawer.classList.toggle(`${CSS_PREFIX}--light`, initialResolved === "light" && globalTheme !== "auto");
+  const drawer = document.createElement("div");
+  drawer.className = `${CSS_PREFIX}-drawer ${CSS_PREFIX}-drawer--${position}`;
+  // Apply theme from global state: explicit dark/light via class, auto via @media fallback
+  const globalTheme = getGlobalTheme();
+  const initialResolved = resolveTheme(globalTheme);
+  drawer.classList.toggle(
+    `${CSS_PREFIX}--dark`,
+    initialResolved === "dark" && globalTheme !== "auto",
+  );
+  drawer.classList.toggle(
+    `${CSS_PREFIX}--light`,
+    initialResolved === "light" && globalTheme !== "auto",
+  );
 
-    // Subscribe to global theme changes so the shell updates even before open()
-    const unsubTheme = onGlobalThemeChange((resolved) => {
-        drawer.classList.toggle(`${CSS_PREFIX}--dark`, resolved === "dark");
-        drawer.classList.toggle(`${CSS_PREFIX}--light`, resolved === "light");
-    });
+  // Subscribe to global theme changes so the shell updates even before open()
+  const unsubTheme = onGlobalThemeChange((resolved) => {
+    drawer.classList.toggle(`${CSS_PREFIX}--dark`, resolved === "dark");
+    drawer.classList.toggle(`${CSS_PREFIX}--light`, resolved === "light");
+  });
 
-    drawer.style.width = toCss(options.width, "420px");
+  drawer.style.width = toCss(options.width, "420px");
 
-    const closeBtn = document.createElement("button");
-    closeBtn.className = `${CSS_PREFIX}-drawer-close`;
-    closeBtn.innerHTML = "&#10005;";
-    closeBtn.setAttribute("aria-label", "Close survey");
-    closeBtn.addEventListener("click", () => handle.close());
+  const closeBtn = document.createElement("button");
+  closeBtn.className = `${CSS_PREFIX}-drawer-close`;
+  closeBtn.innerHTML = "&#10005;";
+  closeBtn.setAttribute("aria-label", "Close survey");
+  closeBtn.addEventListener("click", () => handle.close());
 
-    // Body is the widget container — flex:1 fills the panel height, no height mgmt needed.
-    const body = document.createElement("div");
-    body.className = `${CSS_PREFIX}-drawer-body`;
+  // Body is the widget container — flex:1 fills the panel height, no height mgmt needed.
+  const body = document.createElement("div");
+  body.className = `${CSS_PREFIX}-drawer-body`;
 
-    drawer.appendChild(closeBtn);
-    drawer.appendChild(body);
-    if (isModal) document.body.appendChild(overlay);
-    document.body.appendChild(drawer);
+  drawer.appendChild(closeBtn);
+  drawer.appendChild(body);
+  if (isModal) document.body.appendChild(overlay);
+  document.body.appendChild(drawer);
 
-    function onKeyDown(e: KeyboardEvent) {
-        if (e.key === "Escape") handle.close();
-    }
+  function onKeyDown(e: KeyboardEvent) {
+    if (e.key === "Escape") handle.close();
+  }
 
-    let savedOverflow: string | null = null;
+  let savedOverflow: string | null = null;
 
-    // --- Shared behavior ---
-    // Drawer body fills via flex — widget should not manage height.
-    const handle = createModalBehavior(
-        surveyId,
-        body,
-        options,
-        { autoGrow: false, autoShrink: false },
-        {
-            onPendingShow() {
-                // Slide the drawer in to a "peek" position (~40px visible from the edge)
-                // while the survey loads. This keeps the iframe partially in the viewport
-                // (avoiding browser throttling of off-screen iframes) and signals to the
-                // user that something is loading. The CSS transition animates the peek→open
-                // slide when onShow() fires.
-                if (!document.body.contains(drawer)) document.body.appendChild(drawer);
-                drawer.classList.add(`${CSS_PREFIX}-drawer--peek`);
-            },
-            onShow() {
-                // Removing --peek while adding --open in the same tick causes the browser
-                // to transition from the peek position to fully open — no reflow needed.
-                drawer.classList.remove(`${CSS_PREFIX}-drawer--peek`);
-                if (isModal && !document.body.contains(overlay)) document.body.appendChild(overlay);
-                if (!document.body.contains(drawer)) document.body.appendChild(drawer);
-                if (isModal) {
-                    overlay.classList.add(`${CSS_PREFIX}-drawer-overlay--open`);
-                    savedOverflow = document.body.style.overflow;
-                    document.body.style.overflow = "hidden";
-                    document.addEventListener("keydown", onKeyDown);
-                }
-                drawer.classList.add(`${CSS_PREFIX}-drawer--open`);
-            },
-            onHide() {
-                drawer.classList.remove(`${CSS_PREFIX}-drawer--open`);
-                drawer.classList.remove(`${CSS_PREFIX}-drawer--peek`);
-                if (isModal) {
-                    overlay.classList.remove(`${CSS_PREFIX}-drawer-overlay--open`);
-                    document.body.style.overflow = savedOverflow ?? "";
-                    savedOverflow = null;
-                    document.removeEventListener("keydown", onKeyDown);
-                }
-            },
-            onUnmount() {
-                unsubTheme();
-                overlay.remove();
-                drawer.remove();
-                document.removeEventListener("keydown", onKeyDown);
-                if (isModal) {
-                    document.body.style.overflow = savedOverflow ?? "";
-                    savedOverflow = null;
-                }
-            },
+  // --- Shared behavior ---
+  // Drawer body fills via flex — widget should not manage height.
+  const handle = createModalBehavior(
+    surveyId,
+    body,
+    options,
+    { autoGrow: false, autoShrink: false },
+    {
+      onPendingShow() {
+        // Slide the drawer in to a "peek" position (~40px visible from the edge)
+        // while the survey loads. This keeps the iframe partially in the viewport
+        // (avoiding browser throttling of off-screen iframes) and signals to the
+        // user that something is loading. The CSS transition animates the peek→open
+        // slide when onShow() fires.
+        if (!document.body.contains(drawer)) document.body.appendChild(drawer);
+        drawer.classList.add(`${CSS_PREFIX}-drawer--peek`);
+      },
+      onShow() {
+        // Removing --peek while adding --open in the same tick causes the browser
+        // to transition from the peek position to fully open — no reflow needed.
+        drawer.classList.remove(`${CSS_PREFIX}-drawer--peek`);
+        if (isModal && !document.body.contains(overlay))
+          document.body.appendChild(overlay);
+        if (!document.body.contains(drawer)) document.body.appendChild(drawer);
+        if (isModal) {
+          overlay.classList.add(`${CSS_PREFIX}-drawer-overlay--open`);
+          savedOverflow = document.body.style.overflow;
+          document.body.style.overflow = "hidden";
+          document.addEventListener("keydown", onKeyDown);
         }
-    );
+        drawer.classList.add(`${CSS_PREFIX}-drawer--open`);
+      },
+      onHide() {
+        drawer.classList.remove(`${CSS_PREFIX}-drawer--open`);
+        drawer.classList.remove(`${CSS_PREFIX}-drawer--peek`);
+        if (isModal) {
+          overlay.classList.remove(`${CSS_PREFIX}-drawer-overlay--open`);
+          document.body.style.overflow = savedOverflow ?? "";
+          savedOverflow = null;
+          document.removeEventListener("keydown", onKeyDown);
+        }
+      },
+      onUnmount() {
+        unsubTheme();
+        overlay.remove();
+        drawer.remove();
+        document.removeEventListener("keydown", onKeyDown);
+        if (isModal) {
+          document.body.style.overflow = savedOverflow ?? "";
+          savedOverflow = null;
+        }
+      },
+    },
+  );
 
-    return handle;
+  return handle;
 }

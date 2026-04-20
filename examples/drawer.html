@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drawer Example — YouOpinion Embed SDK</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; }
+    h1 { font-size: 1.4rem; }
+    p { color: #555; line-height: 1.6; }
+    button { padding: 10px 20px; font-size: 1rem; border: none; border-radius: 6px; cursor: pointer; background: #003366; color: #fff; }
+    button:hover { opacity: 0.9; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    #log { margin-top: 24px; font-size: 0.85rem; color: #666; }
+    #log div { padding: 4px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <h1>Drawer</h1>
+  <p>
+    Slides a panel in from the left or right edge. The page stays visible
+    behind it — great for contextual feedback and help desk surveys.
+  </p>
+
+  <div class="actions">
+    <button type="button" id="open-right">Open Right</button>
+    <button type="button" id="open-left" style="background:#555;">Open Left</button>
+    <button type="button" id="open-modal" style="background:#7c3aed;">Open Modal Drawer</button>
+  </div>
+
+  <div id="log"></div>
+
+  <h2>Code</h2>
+  <pre><code>const drawer = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+  position: 'right',
+  width: '450px',
+  language: 'en',
+  autoClose: true,
+});
+
+document.querySelector('#open-right').onclick = () => drawer.open();</code></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/@youropinion/embed/dist/embed.umd.js"></script>
+  <script>
+    const log = document.getElementById('log');
+    function addLog(msg) {
+      const el = document.createElement('div');
+      el.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+      log.prepend(el);
+    }
+
+    // Right drawer (default)
+    const drawerRight = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+      position: 'right',
+      width: '450px',
+      language: 'en',
+      autoClose: true,
+    });
+
+    drawerRight.on('open', () => addLog('Right drawer opened'));
+    drawerRight.on('close', () => addLog('Right drawer closed'));
+    drawerRight.on('submit', ({ responseId }) => addLog('Submitted: ' + responseId));
+
+    document.getElementById('open-right').onclick = () => drawerRight.open();
+
+    // Left drawer
+    const drawerLeft = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+      position: 'left',
+      width: '450px',
+      language: 'en',
+      autoClose: true,
+    });
+
+    document.getElementById('open-left').onclick = () => drawerLeft.open();
+
+    // Modal drawer (with overlay + scroll lock)
+    const drawerModal = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+      position: 'right',
+      width: '500px',
+      modal: true,
+      language: 'en',
+      autoClose: true,
+    });
+
+    document.getElementById('open-modal').onclick = () => drawerModal.open();
+  </script>
+</body>
+</html>

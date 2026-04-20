@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Popover Example — YouOpinion Embed SDK</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; }
+    h1 { font-size: 1.4rem; }
+    p { color: #555; line-height: 1.6; }
+    button { padding: 10px 20px; font-size: 1rem; border: none; border-radius: 6px; cursor: pointer; background: #003366; color: #fff; }
+    button:hover { opacity: 0.9; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    #log { margin-top: 24px; font-size: 0.85rem; color: #666; }
+    #log div { padding: 4px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <h1>Popover</h1>
+  <p>
+    A small panel anchored to a corner of the viewport. Floats above the
+    page without blocking interaction — perfect for passive feedback collection.
+  </p>
+
+  <div class="actions">
+    <button type="button" id="open-popover">Open Popover</button>
+    <button type="button" id="open-fab" style="background:#059669;">With FAB Button</button>
+  </div>
+
+  <div id="log"></div>
+
+  <h2>Code</h2>
+  <pre><code>// Basic popover
+const popover = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+  position: 'bottom-right',
+});
+
+// Popover + floating action button
+const popoverFab = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+  position: 'bottom-right',
+});
+yo.createButton(popoverFab, {
+  position: 'bottom-right',
+  text: 'Feedback',
+  color: '#059669',
+});</code></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/@youropinion/embed/dist/embed.umd.js"></script>
+  <script>
+    const log = document.getElementById('log');
+    function addLog(msg) {
+      const el = document.createElement('div');
+      el.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+      log.prepend(el);
+    }
+
+    // Basic popover opened by a page button
+    const popover = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+      position: 'bottom-right',
+      language: 'en',
+      autoClose: true,
+    });
+
+    popover.on('open', () => addLog('Popover opened'));
+    popover.on('close', () => addLog('Popover closed'));
+    popover.on('submit', ({ responseId }) => addLog('Submitted: ' + responseId));
+
+    document.getElementById('open-popover').onclick = () => popover.open();
+
+    // Popover with a built-in floating action button
+    const popoverFab = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+      position: 'bottom-right',
+      language: 'en',
+      autoClose: true,
+    });
+
+    const fabBtn = yo.createButton(popoverFab, {
+      position: 'bottom-right',
+      text: 'Feedback',
+      color: '#059669',
+      initiallyHidden: true,
+    });
+
+    document.getElementById('open-fab').onclick = () => fabBtn.show();
+  </script>
+</body>
+</html>

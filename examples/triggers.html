@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triggers Example — YouOpinion Embed SDK</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 36px; }
+    p { color: #555; line-height: 1.6; }
+    pre { background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    .spacer { height: 200vh; background: linear-gradient(to bottom, #f9fafb, #e5e7eb); border-radius: 8px; margin-top: 24px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 0.9rem; }
+    #log { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #a3e635; font-family: monospace; font-size: 0.8rem; padding: 12px 20px; max-height: 120px; overflow-y: auto; z-index: 9999; }
+    #log div { padding: 2px 0; }
+  </style>
+</head>
+<body>
+  <h1>Triggers</h1>
+  <p>
+    Triggers let you auto-open surveys based on user behavior — scroll depth,
+    time on page, exit intent, or immediately on load. Scroll down to see them fire.
+  </p>
+
+  <h2>Active triggers on this page</h2>
+  <ul>
+    <li><strong>Time:</strong> Dialog opens after 10 seconds</li>
+    <li><strong>Scroll:</strong> Drawer opens at 50% scroll depth</li>
+    <li><strong>Exit intent:</strong> Popover opens when mouse moves to top of page</li>
+  </ul>
+
+  <pre><code>// Time trigger — open a dialog after 10s
+const dialog = yo.createDialog('2:youropinion:d403xxd5j/mfks', {
+  language: 'en',
+  autoGrow: true,
+  autoClose: true,
+});
+dialog.addTrigger({ type: 'time', delay: 10000 });
+
+// Scroll trigger — open a drawer at 50%
+const drawer = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+  position: 'right',
+  language: 'en',
+  autoClose: true,
+});
+drawer.addTrigger({ type: 'scroll', threshold: 50 });
+
+// Exit intent — open a popover
+const popover = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+  position: 'bottom-left',
+  language: 'en',
+  autoClose: true,
+});
+popover.addTrigger({ type: 'exit', sensitivity: 20 });</code></pre>
+
+  <div class="spacer">↓ Scroll down to trigger the drawer at 50% ↓</div>
+
+  <div id="log"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@youropinion/embed/dist/embed.umd.js"></script>
+  <script>
+    const log = document.getElementById('log');
+    function addLog(msg) {
+      const el = document.createElement('div');
+      el.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+      log.prepend(el);
+    }
+
+    // Time trigger
+    const dialog = yo.createDialog('2:youropinion:d403xxd5j/mfks', {
+      language: 'en',
+      autoGrow: true,
+      autoClose: true,
+    });
+    dialog.addTrigger({ type: 'time', delay: 10000 });
+    dialog.on('open', () => addLog('Time trigger → Dialog opened'));
+
+    // Scroll trigger
+    const drawer = yo.createDrawer('2:youropinion:d403xxd5j/mfks', {
+      position: 'right',
+      language: 'en',
+      autoClose: true,
+    });
+    drawer.addTrigger({ type: 'scroll', threshold: 50 });
+    drawer.on('open', () => addLog('Scroll trigger → Drawer opened'));
+
+    // Exit intent trigger
+    const popover = yo.createPopover('2:youropinion:d403xxd5j/mfks', {
+      position: 'bottom-left',
+      language: 'en',
+      autoClose: true,
+    });
+    popover.addTrigger({ type: 'exit', sensitivity: 20 });
+    popover.on('open', () => addLog('Exit intent → Popover opened'));
+  </script>
+</body>
+</html>
