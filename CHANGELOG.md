@@ -1,5 +1,15 @@
 # @youropinion/embed
 
+## 0.2.0
+
+### Minor Changes
+
+- [`25d5517`](https://github.com/youropinion-is/embed-sdk/commit/25d55171bbaccbe4de06c68af4bc33cf790b163e) - README with better instructions
+
+### Patch Changes
+
+- [`25d5517`](https://github.com/youropinion-is/embed-sdk/commit/25d55171bbaccbe4de06c68af4bc33cf790b163e) - Enable local development
+
 ## 0.1.1
 
 ### Patch Changes
