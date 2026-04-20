@@ -1,0 +1,66 @@
+{
+  "name": "@youropinion/embed",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Embed YouOpinion surveys on any website. Surfaces: Widget, Dialog, Drawer, Popover. Triggers: Feedback Tab, Chat Bubble.",
+  "license": "MIT",
+  "main": "dist/embed.umd.js",
+  "module": "dist/embed.esm.js",
+  "types": "dist/embed.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/embed.d.ts",
+      "import": "./dist/embed.esm.js",
+      "require": "./dist/embed.umd.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.esm.js"
+    },
+    "./css": "./dist/embed.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/youropinion-is/embed-sdk.git"
+  },
+  "scripts": {
+    "build": "node build.mjs && tsc -p tsconfig.build.json",
+    "tsc": "tsc --noEmit",
+    "test": "node --import tsx --import global-jsdom/register --test 'tests/**/*.test.ts'",
+    "test:coverage": "node --import tsx --import global-jsdom/register --test --experimental-test-coverage --test-coverage-include='src/**/*' 'tests/**/*.test.ts'",
+    "prepublishOnly": "pnpm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "esbuild": "^0.25.0",
+    "global-jsdom": "29.0.0",
+    "jsdom": "29.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3"
+  },
+  "keywords": [
+    "youropinion",
+    "survey",
+    "embed",
+    "form",
+    "widget",
+    "popup",
+    "feedback",
+    "iframe"
+  ]
+}
