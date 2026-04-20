@@ -1,6 +1,6 @@
 {
   "name": "@youropinion/embed",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Embed YouOpinion surveys on any website. Surfaces: Widget, Dialog, Drawer, Popover. Triggers: Feedback Tab, Chat Bubble.",
   "license": "MIT",
