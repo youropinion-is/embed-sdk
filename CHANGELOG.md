@@ -1,5 +1,11 @@
 # @youropinion/embed
 
+## 0.2.1
+
+### Patch Changes
+
+- [`bebc04c`](https://github.com/youropinion-is/embed-sdk/commit/bebc04c071988fde9a950cf2b74782b40a53c36b) - CSS isolation fixes
+
 ## 0.2.0
 
 ### Minor Changes
