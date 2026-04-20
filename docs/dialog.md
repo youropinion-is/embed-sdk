@@ -12,8 +12,8 @@ The dialog opens a centered modal overlay. It dims the page, locks body scroll, 
 import { createDialog } from "@youropinion/embed";
 
 const dialog = createDialog("YOUR_SURVEY_ID", {
-    size: 70,
-    waitForReady: true,
+  size: 70,
+  waitForReady: true,
 });
 
 document.querySelector("#open-btn").onclick = () => dialog.open();
@@ -25,12 +25,12 @@ document.querySelector("#open-btn").onclick = () => dialog.open();
 import { useDialog } from "@youropinion/embed/react";
 
 function SurveyDialog() {
-    const dialog = useDialog("YOUR_SURVEY_ID", {
-        size: 70,
-        waitForReady: true,
-    });
+  const dialog = useDialog("YOUR_SURVEY_ID", {
+    size: 70,
+    waitForReady: true,
+  });
 
-    return <button onClick={() => dialog.open()}>Give Feedback</button>;
+  return <button onClick={() => dialog.open()}>Give Feedback</button>;
 }
 ```
 
@@ -38,7 +38,7 @@ function SurveyDialog() {
 
 ```html
 <button data-yo-dialog="YOUR_SURVEY_ID">Give Feedback</button>
-<script src="https://embed.youropinion.is/v1/embed.js"></script>
+<script src="https://share.youropinion.is/embed/latest.js"></script>
 ```
 
 ## Options
@@ -104,7 +104,10 @@ dialog.unmount()   // Remove from DOM and clean up
 With `keepSession: true` you can silently preload the survey before the user triggers the dialog:
 
 ```js
-const dialog = createDialog("YOUR_SURVEY_ID", { keepSession: true, waitForReady: true });
+const dialog = createDialog("YOUR_SURVEY_ID", {
+  keepSession: true,
+  waitForReady: true,
+});
 dialog.preload(); // Start loading immediately, dialog stays hidden
 // Later...
 dialog.open(); // Opens instantly — already loaded
@@ -114,22 +117,22 @@ dialog.open(); // Opens instantly — already loaded
 
 ```js
 dialog.on("open", () => {
-    /* dialog opened */
+  /* dialog opened */
 });
 dialog.on("close", ({ surveyId }) => {
-    /* dialog closed */
+  /* dialog closed */
 });
 dialog.on("ready", ({ surveyId }) => {
-    /* survey loaded */
+  /* survey loaded */
 });
 dialog.on("started", ({ surveyId, responseId }) => {
-    /* first answer given */
+  /* first answer given */
 });
 dialog.on("submit", ({ surveyId, responseId }) => {
-    /* survey submitted */
+  /* survey submitted */
 });
 dialog.on("questionChanged", ({ surveyId, ref }) => {
-    /* page/question changed */
+  /* page/question changed */
 });
 
 dialog.off("open", handler); // Unsubscribe
@@ -159,7 +162,7 @@ Override these on `.yo-embed-dialog` to customise the appearance:
 ```css
 /* Example: square corners and a lighter overlay */
 .yo-embed-dialog {
-    --yo-border-radius: 0;
-    --yo-overlay-bg: rgba(0, 0, 0, 0.3);
+  --yo-border-radius: 0;
+  --yo-overlay-bg: rgba(0, 0, 0, 0.3);
 }
 ```

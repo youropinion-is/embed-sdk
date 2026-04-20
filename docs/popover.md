@@ -12,8 +12,8 @@ The popover opens a small panel anchored to a corner of the viewport. It floats 
 import { createPopover } from "@youropinion/embed";
 
 const popover = createPopover("YOUR_SURVEY_ID", {
-    position: "bottom-right",
-    waitForReady: true,
+  position: "bottom-right",
+  waitForReady: true,
 });
 
 document.querySelector("#feedback-btn").onclick = () => popover.open();
@@ -25,20 +25,22 @@ document.querySelector("#feedback-btn").onclick = () => popover.open();
 import { usePopover } from "@youropinion/embed/react";
 
 function FeedbackPopover() {
-    const popover = usePopover("YOUR_SURVEY_ID", {
-        position: "bottom-right",
-        waitForReady: true,
-    });
+  const popover = usePopover("YOUR_SURVEY_ID", {
+    position: "bottom-right",
+    waitForReady: true,
+  });
 
-    return <button onClick={() => popover.open()}>Feedback</button>;
+  return <button onClick={() => popover.open()}>Feedback</button>;
 }
 ```
 
 ### HTML (no JavaScript)
 
 ```html
-<button data-yo-popover="YOUR_SURVEY_ID" data-yo-position="bottom-right">Feedback</button>
-<script src="https://embed.youropinion.is/v1/embed.js"></script>
+<button data-yo-popover="YOUR_SURVEY_ID" data-yo-position="bottom-right">
+  Feedback
+</button>
+<script src="https://share.youropinion.is/embed/latest.js"></script>
 ```
 
 ### With a FAB Button
@@ -116,22 +118,22 @@ popover.unmount()   // Remove from DOM and clean up
 
 ```js
 popover.on("open", () => {
-    /* panel opened */
+  /* panel opened */
 });
 popover.on("close", ({ surveyId }) => {
-    /* panel closed */
+  /* panel closed */
 });
 popover.on("ready", ({ surveyId }) => {
-    /* survey loaded */
+  /* survey loaded */
 });
 popover.on("started", ({ surveyId, responseId }) => {
-    /* first answer given */
+  /* first answer given */
 });
 popover.on("submit", ({ surveyId, responseId }) => {
-    /* survey submitted */
+  /* survey submitted */
 });
 popover.on("questionChanged", ({ surveyId, ref }) => {
-    /* page/question changed */
+  /* page/question changed */
 });
 
 popover.off("open", handler); // Unsubscribe
@@ -160,7 +162,7 @@ Override these on `.yo-embed-popover-panel` to customise the appearance:
 ```css
 /* Example: custom size and no shadow */
 .yo-embed-popover-panel {
-    --yo-shadow: none;
-    --yo-border-radius: 4px;
+  --yo-shadow: none;
+  --yo-border-radius: 4px;
 }
 ```

@@ -9,7 +9,7 @@
  *   import { createWidget, createDialog, createDrawer } from '@youropinion/embed'
  *
  * Usage (CDN):
- *   <script src="https://embed.youropinion.is/v1/embed.js"></script>
+ *   <script src="https://share.youropinion.is/embed/latest.js"></script>
  *   <div data-yo-widget="SURVEY_ID"></div>
  *
  * Global: window.yo

@@ -9,7 +9,7 @@ Embed YouOpinion surveys on any website. Zero dependencies, framework-agnostic, 
 ```html
 <!-- Inline survey -->
 <div data-yo-widget="SURVEY_ID"></div>
-<script src="https://embed.youropinion.is/v1/embed.js"></script>
+<script src="https://share.youropinion.is/embed/latest.js"></script>
 ```
 
 The script auto-scans the page for `data-yo-*` attributes and initializes embeds.
@@ -24,21 +24,21 @@ npm install @youropinion/embed
 import { createWidget } from "@youropinion/embed";
 
 createWidget("SURVEY_ID", {
-    container: document.querySelector("#survey"),
+  container: document.querySelector("#survey"),
 });
 ```
 
 ## Embed Modes
 
-| Mode             | Function         | HTML Attribute         | Description                                        |
-| ---------------- | ---------------- | ---------------------- | -------------------------------------------------- |
-| **Widget**       | `createWidget()` | `data-yo-widget`       | Inline survey rendered inside a container element  |
-| **Dialog**       | `createDialog()` | `data-yo-dialog`       | Centered modal overlay                             |
-| **Drawer**       | `createDrawer()` | `data-yo-drawer`       | Side panel sliding from screen edge                |
-| **Popover**      | `createPopover()`| `data-yo-popover`      | Corner floating panel                              |
-| **Button**       | `createButton()` | —                      | Composable UI control that opens any modal surface |
-| **Feedback Tab** | —                | `data-yo-feedback-tab` | HTML API shorthand: Button + Drawer combo          |
-| **Chat Bubble**  | —                | `data-yo-chat-bubble`  | HTML API shorthand: Button + Popover combo         |
+| Mode             | Function          | HTML Attribute         | Description                                        |
+| ---------------- | ----------------- | ---------------------- | -------------------------------------------------- |
+| **Widget**       | `createWidget()`  | `data-yo-widget`       | Inline survey rendered inside a container element  |
+| **Dialog**       | `createDialog()`  | `data-yo-dialog`       | Centered modal overlay                             |
+| **Drawer**       | `createDrawer()`  | `data-yo-drawer`       | Side panel sliding from screen edge                |
+| **Popover**      | `createPopover()` | `data-yo-popover`      | Corner floating panel                              |
+| **Button**       | `createButton()`  | —                      | Composable UI control that opens any modal surface |
+| **Feedback Tab** | —                 | `data-yo-feedback-tab` | HTML API shorthand: Button + Drawer combo          |
+| **Chat Bubble**  | —                 | `data-yo-chat-bubble`  | HTML API shorthand: Button + Popover combo         |
 
 ### Widget (inline)
 
@@ -48,11 +48,11 @@ createWidget("SURVEY_ID", {
 
 ```js
 const widget = createWidget("SURVEY_ID", {
-    container: document.querySelector("#survey"),
-    height: "600px",
-    autoGrow: true,
-    autoShrink: true,
-    lazy: true,
+  container: document.querySelector("#survey"),
+  height: "600px",
+  autoGrow: true,
+  autoShrink: true,
+  lazy: true,
 });
 
 widget.on("submit", ({ responseId }) => console.log("Submitted:", responseId));
@@ -67,8 +67,8 @@ widget.on("submit", ({ responseId }) => console.log("Submitted:", responseId));
 
 ```js
 const dialog = createDialog("SURVEY_ID", {
-    size: 80,
-    autoClose: 3000,
+  size: 80,
+  autoClose: 3000,
 });
 
 dialog.on("submit", ({ responseId }) => console.log("Submitted:", responseId));
@@ -84,8 +84,8 @@ dialog.open();
 
 ```js
 const drawer = createDrawer("SURVEY_ID", {
-    position: "right",
-    width: "450px",
+  position: "right",
+  width: "450px",
 });
 
 drawer.open();
@@ -94,14 +94,16 @@ drawer.open();
 ### Popover (floating panel)
 
 ```html
-<button data-yo-popover="SURVEY_ID" data-yo-position="bottom-right">Open Survey</button>
+<button data-yo-popover="SURVEY_ID" data-yo-position="bottom-right">
+  Open Survey
+</button>
 ```
 
 ```js
 const popover = createPopover("SURVEY_ID", {
-    position: "bottom-right",
-    width: "380px",
-    height: "520px",
+  position: "bottom-right",
+  width: "380px",
+  height: "520px",
 });
 
 popover.open();
@@ -115,20 +117,20 @@ popover.open();
 
 ```html
 <div
-    data-yo-feedback-tab="SURVEY_ID"
-    data-yo-button-text="Feedback"
-    data-yo-button-color="#003366"
-    data-yo-position="right"
+  data-yo-feedback-tab="SURVEY_ID"
+  data-yo-button-text="Feedback"
+  data-yo-button-color="#003366"
+  data-yo-position="right"
 ></div>
 ```
 
 ```js
 const drawer = createDrawer("SURVEY_ID", { width: "420px", autoClose: 3000 });
 const tab = createButton(drawer, {
-    position: "right",
-    text: "Feedback",
-    color: "#003366",
-    hideAfterSubmit: true,
+  position: "right",
+  text: "Feedback",
+  color: "#003366",
+  hideAfterSubmit: true,
 });
 ```
 
@@ -136,19 +138,19 @@ const tab = createButton(drawer, {
 
 ```html
 <div
-    data-yo-chat-bubble="SURVEY_ID"
-    data-yo-button-tooltip="Share your thoughts!"
-    data-yo-position="bottom-right"
+  data-yo-chat-bubble="SURVEY_ID"
+  data-yo-button-tooltip="Share your thoughts!"
+  data-yo-position="bottom-right"
 ></div>
 ```
 
 ```js
 const popover = createPopover("SURVEY_ID", { width: "380px", height: "520px" });
 const bubble = createButton(popover, {
-    position: "bottom-right",
-    tooltip: "Share your thoughts!",
-    color: "#003366",
-    hideAfterSubmit: true,
+  position: "bottom-right",
+  tooltip: "Share your thoughts!",
+  color: "#003366",
+  hideAfterSubmit: true,
 });
 ```
 
@@ -158,13 +160,13 @@ const bubble = createButton(popover, {
 
 Shared by all embed modes.
 
-| Option         | Type                     | Default                        | Description                                     |
-| -------------- | ------------------------ | ------------------------------ | ----------------------------------------------- |
-| `language`     | `string`                 | auto-detect                    | Language code (`en`, `de`, `et`, `fr`, etc.)    |
-| `domain`       | `string`                 | `https://share.youropinion.is` | Custom share domain (must be HTTPS)             |
-| `hidden`       | `Record<string, string>` | —                              | Hidden fields as key-value pairs                |
-| `payload`      | `string`                 | —                              | JWT payload for safe links                      |
-| `waitForReady` | `boolean`                | `false`                        | Hide iframe until survey signals it's loaded    |
+| Option         | Type                     | Default                        | Description                                  |
+| -------------- | ------------------------ | ------------------------------ | -------------------------------------------- |
+| `language`     | `string`                 | auto-detect                    | Language code (`en`, `de`, `et`, `fr`, etc.) |
+| `domain`       | `string`                 | `https://share.youropinion.is` | Custom share domain (must be HTTPS)          |
+| `hidden`       | `Record<string, string>` | —                              | Hidden fields as key-value pairs             |
+| `payload`      | `string`                 | —                              | JWT payload for safe links                   |
+| `waitForReady` | `boolean`                | `false`                        | Hide iframe until survey signals it's loaded |
 
 ### Widget Options
 
@@ -192,11 +194,11 @@ Plus all [modal options](#modal-options).
 
 ### Drawer Options
 
-| Option     | Type                  | Default   | Description                                             |
-| ---------- | --------------------- | --------- | ------------------------------------------------------- |
-| `position` | `'left'` \| `'right'` | `'right'` | Slide direction                                         |
-| `width`    | `number \| string`    | `'420px'` | Panel width                                             |
-| `modal`    | `boolean`             | `false`   | Show overlay, lock scroll, and enable Escape key close  |
+| Option     | Type                  | Default   | Description                                            |
+| ---------- | --------------------- | --------- | ------------------------------------------------------ |
+| `position` | `'left'` \| `'right'` | `'right'` | Slide direction                                        |
+| `width`    | `number \| string`    | `'420px'` | Panel width                                            |
+| `modal`    | `boolean`             | `false`   | Show overlay, lock scroll, and enable Escape key close |
 
 Plus all [modal options](#modal-options).
 
@@ -225,18 +227,18 @@ Shared by dialog, drawer, and popover (not widget).
 
 ### Button Options
 
-| Option            | Type                                                  | Default      | Description                                      |
-| ----------------- | ----------------------------------------------------- | ------------ | ------------------------------------------------ |
-| `position`        | `'left'` \| `'right'` \| `'bottom-left'` \| `'bottom-right'` | `'right'`    | Screen position. Edge → tab, bottom → FAB        |
-| `text`            | `string`                                              | `'Feedback'` | Button label text                                |
-| `tooltip`         | `string`                                              | —            | Tooltip shown on hover (FAB only)                |
-| `icon`            | `string`                                              | —            | SVG markup, URL, or emoji                        |
-| `color`           | `string`                                              | `'#003366'`  | Background color (light mode)                    |
-| `colorDark`       | `string`                                              | `color`      | Background color (dark mode)                     |
-| `textColor`       | `string`                                              | auto         | Text color (auto-determined from background)     |
-| `hideAfterSubmit` | `boolean`                                             | `false`      | Hide button after survey submitted               |
-| `initiallyHidden` | `boolean`                                             | `false`      | Start hidden; reveal via triggers                |
-| `container`       | `HTMLElement`                                         | —            | Use a custom element instead of built-in button  |
+| Option            | Type                                                         | Default      | Description                                     |
+| ----------------- | ------------------------------------------------------------ | ------------ | ----------------------------------------------- |
+| `position`        | `'left'` \| `'right'` \| `'bottom-left'` \| `'bottom-right'` | `'right'`    | Screen position. Edge → tab, bottom → FAB       |
+| `text`            | `string`                                                     | `'Feedback'` | Button label text                               |
+| `tooltip`         | `string`                                                     | —            | Tooltip shown on hover (FAB only)               |
+| `icon`            | `string`                                                     | —            | SVG markup, URL, or emoji                       |
+| `color`           | `string`                                                     | `'#003366'`  | Background color (light mode)                   |
+| `colorDark`       | `string`                                                     | `color`      | Background color (dark mode)                    |
+| `textColor`       | `string`                                                     | auto         | Text color (auto-determined from background)    |
+| `hideAfterSubmit` | `boolean`                                                    | `false`      | Hide button after survey submitted              |
+| `initiallyHidden` | `boolean`                                                    | `false`      | Start hidden; reveal via triggers               |
+| `container`       | `HTMLElement`                                                | —            | Use a custom element instead of built-in button |
 
 ### Triggers
 
@@ -280,8 +282,12 @@ const dialog = createDialog("SURVEY_ID");
 dialog.on("ready", ({ surveyId }) => console.log("Loaded"));
 dialog.on("started", ({ surveyId, responseId }) => console.log("Started"));
 dialog.on("submit", ({ surveyId, responseId }) => console.log("Submitted"));
-dialog.on("questionChanged", ({ surveyId, ref }) => console.log("Question:", ref));
-dialog.on("heightChanged", ({ surveyId, height }) => console.log("Height:", height));
+dialog.on("questionChanged", ({ surveyId, ref }) =>
+  console.log("Question:", ref),
+);
+dialog.on("heightChanged", ({ surveyId, height }) =>
+  console.log("Height:", height),
+);
 
 // Modal surfaces also emit:
 dialog.on("open", () => console.log("Opened"));
@@ -296,13 +302,13 @@ All surfaces support `ready`, `started`, `submit`, `questionChanged`, and `heigh
 
 ```ts
 interface WidgetHandle {
-    on(event, callback): void;     // Subscribe to events
-    off(event, callback): void;    // Unsubscribe from events
-    addTrigger(config): () => void; // Add behavioral trigger
-    clearTriggers(): void;         // Remove all triggers
-    preload(): void;               // Start loading (useful with lazy)
-    refresh(): void;               // Reload iframe
-    unmount(): void;               // Remove from DOM
+  on(event, callback): void; // Subscribe to events
+  off(event, callback): void; // Unsubscribe from events
+  addTrigger(config): () => void; // Add behavioral trigger
+  clearTriggers(): void; // Remove all triggers
+  preload(): void; // Start loading (useful with lazy)
+  refresh(): void; // Reload iframe
+  unmount(): void; // Remove from DOM
 }
 ```
 
@@ -310,16 +316,16 @@ interface WidgetHandle {
 
 ```ts
 interface ModalHandle {
-    on(event, callback): void;     // Subscribe to events
-    off(event, callback): void;    // Unsubscribe from events
-    preload(): void;               // Load iframe without showing (requires keepSession)
-    open(): void;                  // Show the surface
-    close(): void;                 // Hide the surface
-    toggle(): void;                // Toggle open/close
-    addTrigger(config): () => void; // Add behavioral trigger
-    clearTriggers(): void;         // Remove all triggers
-    refresh(): void;               // Reload iframe
-    unmount(): void;               // Remove from DOM
+  on(event, callback): void; // Subscribe to events
+  off(event, callback): void; // Unsubscribe from events
+  preload(): void; // Load iframe without showing (requires keepSession)
+  open(): void; // Show the surface
+  close(): void; // Hide the surface
+  toggle(): void; // Toggle open/close
+  addTrigger(config): () => void; // Add behavioral trigger
+  clearTriggers(): void; // Remove all triggers
+  refresh(): void; // Reload iframe
+  unmount(): void; // Remove from DOM
 }
 ```
 
@@ -327,11 +333,11 @@ interface ModalHandle {
 
 ```ts
 interface ButtonHandle {
-    show(): void;                  // Show the button
-    hide(): void;                  // Hide the button
-    addTrigger(config): () => void; // Add behavioral trigger
-    clearTriggers(): void;         // Remove all triggers
-    unmount(): void;               // Remove from DOM
+  show(): void; // Show the button
+  hide(): void; // Hide the button
+  addTrigger(config): () => void; // Add behavioral trigger
+  clearTriggers(): void; // Remove all triggers
+  unmount(): void; // Remove from DOM
 }
 ```
 
@@ -341,11 +347,11 @@ All options can be set as `data-yo-*` attributes in kebab-case:
 
 ```html
 <div
-    data-yo-widget="SURVEY_ID"
-    data-yo-language="de"
-    data-yo-auto-grow="800"
-    data-yo-auto-shrink="200"
-    data-yo-lazy
+  data-yo-widget="SURVEY_ID"
+  data-yo-language="de"
+  data-yo-auto-grow="800"
+  data-yo-auto-shrink="200"
+  data-yo-lazy
 ></div>
 ```
 
@@ -353,9 +359,9 @@ Nested options use prefixed attributes:
 
 ```html
 <div
-    data-yo-feedback-tab="SURVEY_ID"
-    data-yo-button-text="Feedback"
-    data-yo-button-color="#003366"
+  data-yo-feedback-tab="SURVEY_ID"
+  data-yo-button-text="Feedback"
+  data-yo-button-color="#003366"
 ></div>
 ```
 
@@ -417,7 +423,7 @@ Two entry points:
 import { EmbedWidget } from "@youropinion/embed/react";
 
 function Survey() {
-    return <EmbedWidget surveyId="SURVEY_ID" autoGrow autoShrink lazy />;
+  return <EmbedWidget surveyId="SURVEY_ID" autoGrow autoShrink lazy />;
 }
 ```
 
@@ -429,12 +435,12 @@ Accepts all `WidgetOptions` as props (except `container`, which is managed inter
 import { useDialog } from "@youropinion/embed/react";
 
 function SurveyButton() {
-    const survey = useDialog("SURVEY_ID", {
-        size: 80,
-        autoClose: 3000,
-    });
+  const survey = useDialog("SURVEY_ID", {
+    size: 80,
+    autoClose: 3000,
+  });
 
-    return <button onClick={() => survey.open()}>Open Survey</button>;
+  return <button onClick={() => survey.open()}>Open Survey</button>;
 }
 ```
 
@@ -446,9 +452,16 @@ Hooks return a `ModalHandle`. The embed remounts when `surveyId` or `language` c
 import { useDrawer, EmbedButton } from "@youropinion/embed/react";
 
 function App() {
-    const drawer = useDrawer("SURVEY_ID", { width: "420px" });
+  const drawer = useDrawer("SURVEY_ID", { width: "420px" });
 
-    return <EmbedButton handle={drawer} position="right" text="Feedback" color="#003366" />;
+  return (
+    <EmbedButton
+      handle={drawer}
+      position="right"
+      text="Feedback"
+      color="#003366"
+    />
+  );
 }
 ```
 
@@ -497,18 +510,19 @@ https://share.youropinion.is/#/{surveySlug}/{channelSlug}?theme=light&language=e
 
 ```js
 const iframe = document.createElement("iframe");
-iframe.src = "https://share.youropinion.is/#/SURVEY_SLUG/CHANNEL_SLUG?theme=light";
+iframe.src =
+  "https://share.youropinion.is/#/SURVEY_SLUG/CHANNEL_SLUG?theme=light";
 iframe.style.cssText = "width: 100%; height: 500px; border: none;";
 document.body.appendChild(iframe);
 
 window.addEventListener("message", (event) => {
-    if (event.origin !== "https://share.youropinion.is") return;
-    if (event.data.message === "survey-ready") {
-        iframe.style.opacity = "1";
-    }
-    if (event.data.message === "survey-completed") {
-        iframe.remove();
-    }
+  if (event.origin !== "https://share.youropinion.is") return;
+  if (event.data.message === "survey-ready") {
+    iframe.style.opacity = "1";
+  }
+  if (event.data.message === "survey-completed") {
+    iframe.remove();
+  }
 });
 ```
 

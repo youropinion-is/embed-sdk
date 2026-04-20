@@ -12,9 +12,9 @@ The drawer opens a panel that slides in from the left or right edge of the scree
 import { createDrawer } from "@youropinion/embed";
 
 const drawer = createDrawer("YOUR_SURVEY_ID", {
-    position: "right",
-    width: "450px",
-    waitForReady: true,
+  position: "right",
+  width: "450px",
+  waitForReady: true,
 });
 
 document.querySelector("#open-btn").onclick = () => drawer.open();
@@ -26,21 +26,23 @@ document.querySelector("#open-btn").onclick = () => drawer.open();
 import { useDrawer } from "@youropinion/embed/react";
 
 function SurveyDrawer() {
-    const drawer = useDrawer("YOUR_SURVEY_ID", {
-        position: "right",
-        width: "450px",
-        waitForReady: true,
-    });
+  const drawer = useDrawer("YOUR_SURVEY_ID", {
+    position: "right",
+    width: "450px",
+    waitForReady: true,
+  });
 
-    return <button onClick={() => drawer.open()}>Open Survey</button>;
+  return <button onClick={() => drawer.open()}>Open Survey</button>;
 }
 ```
 
 ### HTML (no JavaScript)
 
 ```html
-<button data-yo-drawer="YOUR_SURVEY_ID" data-yo-position="right">Open Survey</button>
-<script src="https://embed.youropinion.is/v1/embed.js"></script>
+<button data-yo-drawer="YOUR_SURVEY_ID" data-yo-position="right">
+  Open Survey
+</button>
+<script src="https://share.youropinion.is/embed/latest.js"></script>
 ```
 
 ## Options
@@ -98,22 +100,22 @@ drawer.unmount()   // Remove from DOM and clean up
 
 ```js
 drawer.on("open", () => {
-    /* drawer opened */
+  /* drawer opened */
 });
 drawer.on("close", ({ surveyId }) => {
-    /* drawer closed */
+  /* drawer closed */
 });
 drawer.on("ready", ({ surveyId }) => {
-    /* survey loaded */
+  /* survey loaded */
 });
 drawer.on("started", ({ surveyId, responseId }) => {
-    /* first answer given */
+  /* first answer given */
 });
 drawer.on("submit", ({ surveyId, responseId }) => {
-    /* survey submitted */
+  /* survey submitted */
 });
 drawer.on("questionChanged", ({ surveyId, ref }) => {
-    /* page/question changed */
+  /* page/question changed */
 });
 
 drawer.off("open", handler); // Unsubscribe
@@ -146,7 +148,7 @@ Override these on `.yo-embed-drawer` to customise the appearance:
 ```css
 /* Example: custom background and no shadow */
 .yo-embed-drawer {
-    --yo-bg: #f5f5f5;
-    --yo-shadow: none;
+  --yo-bg: #f5f5f5;
+  --yo-shadow: none;
 }
 ```

@@ -12,9 +12,9 @@ The widget is an inline embed — it renders the survey directly inside a contai
 import { createWidget } from "@youropinion/embed";
 
 const widget = createWidget("YOUR_SURVEY_ID", {
-    container: document.querySelector("#survey-container"),
-    width: "100%",
-    height: "500px",
+  container: document.querySelector("#survey-container"),
+  width: "100%",
+  height: "500px",
 });
 ```
 
@@ -25,17 +25,17 @@ import { useRef, useEffect } from "react";
 import { createWidget } from "@youropinion/embed";
 
 function SurveyWidget() {
-    const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const widget = createWidget("YOUR_SURVEY_ID", {
-            container: containerRef.current!,
-            width: "100%",
-        });
-        return () => widget.unmount();
-    }, []);
+  useEffect(() => {
+    const widget = createWidget("YOUR_SURVEY_ID", {
+      container: containerRef.current!,
+      width: "100%",
+    });
+    return () => widget.unmount();
+  }, []);
 
-    return <div ref={containerRef} />;
+  return <div ref={containerRef} />;
 }
 ```
 
@@ -43,7 +43,7 @@ function SurveyWidget() {
 
 ```html
 <div data-yo-widget="YOUR_SURVEY_ID"></div>
-<script src="https://embed.youropinion.is/v1/embed.js"></script>
+<script src="https://share.youropinion.is/embed/latest.js"></script>
 ```
 
 ## Options
@@ -78,7 +78,12 @@ By default (`autoGrow: true`, `autoShrink: true`) the widget automatically resiz
 
 ```js
 // Fixed height — disable both
-createWidget("ID", { container, height: "500px", autoGrow: false, autoShrink: false });
+createWidget("ID", {
+  container,
+  height: "500px",
+  autoGrow: false,
+  autoShrink: false,
+});
 
 // Grow only, cap at 800px
 createWidget("ID", { container, autoGrow: 800, autoShrink: false });
@@ -109,19 +114,19 @@ widget.unmount(); // Remove from DOM and clean up
 
 ```js
 widget.on("ready", ({ surveyId }) => {
-    /* survey loaded */
+  /* survey loaded */
 });
 widget.on("started", ({ surveyId, responseId }) => {
-    /* first answer given */
+  /* first answer given */
 });
 widget.on("submit", ({ surveyId, responseId }) => {
-    /* survey submitted */
+  /* survey submitted */
 });
 widget.on("questionChanged", ({ surveyId, ref }) => {
-    /* page/question changed */
+  /* page/question changed */
 });
 widget.on("heightChanged", ({ surveyId, height }) => {
-    /* content height changed */
+  /* content height changed */
 });
 
 widget.off("ready", handler); // Unsubscribe
