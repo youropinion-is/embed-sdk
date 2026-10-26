@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import { postFromIframe } from "./helpers/messages.ts";
 import { setGlobalTheme } from "../src/core/theme-manager.ts";
 import { CSS_PREFIX } from "../src/core/utils.ts";
 import { createDrawer } from "../src/surfaces/drawer.ts";
@@ -36,12 +37,7 @@ describe("createDrawer", () => {
             );
 
             // Simulate survey-ready from the iframe
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDrawerElements().iframe, { message: "survey-ready", surveyId: "test/ch" });
 
             // After ready: drawer should be open
             assert.ok(
@@ -73,12 +69,7 @@ describe("createDrawer", () => {
             );
 
             // After ready: peek removed, open added
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDrawerElements().iframe, { message: "survey-ready", surveyId: "test/ch" });
 
             assert.ok(
                 !drawer.classList.contains(`${CSS_PREFIX}-drawer--peek`),
@@ -97,12 +88,7 @@ describe("createDrawer", () => {
             handle.open();
 
             // Fire ready → drawer opens fully
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDrawerElements().iframe, { message: "survey-ready", surveyId: "test/ch" });
 
             const { drawer } = getDrawerElements();
             assert.ok(drawer!.classList.contains(`${CSS_PREFIX}-drawer--open`), "drawer open after ready");
@@ -337,12 +323,7 @@ describe("createDrawer", () => {
             const handle = createDrawer("test/ch", { autoClose: 0 });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDrawerElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 0));
 
             const { drawer } = getDrawerElements();
@@ -355,12 +336,7 @@ describe("createDrawer", () => {
             const handle = createDrawer("test/ch", { autoClose: 10 });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDrawerElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 50));
 
             const { drawer } = getDrawerElements();

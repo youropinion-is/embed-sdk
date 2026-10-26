@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import { postFromIframe } from "./helpers/messages.ts";
 import { setGlobalTheme } from "../src/core/theme-manager.ts";
 import { CSS_PREFIX } from "../src/core/utils.ts";
 import { createDialog } from "../src/surfaces/dialog.ts";
@@ -136,13 +137,7 @@ describe("createDialog", () => {
             handle.open();
 
             // Simulate survey-ready postMessage from the survey iframe
-            // Use window.MessageEvent (jsdom's) not the native Node.js MessageEvent
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-ready", surveyId: "test/ch" });
 
             const overlay = document.querySelector(`.${CSS_PREFIX}-dialog-overlay`) as HTMLElement | null;
             assert.ok(overlay, "overlay should exist");
@@ -306,12 +301,7 @@ describe("createDialog", () => {
             const handle = createDialog("test/ch", { width: 400, height: 400, autoGrow: true, autoShrink: false });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 600 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 600 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { dialog } = getDialogElements();
@@ -325,12 +315,7 @@ describe("createDialog", () => {
             const handle = createDialog("test/ch", { width: 400, height: 400, autoGrow: true, autoShrink: false });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 200 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 200 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { dialog } = getDialogElements();
@@ -344,12 +329,7 @@ describe("createDialog", () => {
             const handle = createDialog("test/ch", { width: 400, height: 400, autoGrow: true, autoShrink: true });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 200 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 200 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { dialog } = getDialogElements();
@@ -365,12 +345,7 @@ describe("createDialog", () => {
             const handle = createDialog("test/ch", { autoClose: 0 });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 0));
 
             const overlay = document.querySelector(`.${CSS_PREFIX}-dialog-overlay`) as HTMLElement | null;
@@ -383,12 +358,7 @@ describe("createDialog", () => {
             const handle = createDialog("test/ch", { autoClose: 10 }); // 10ms for fast test
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getDialogElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 50));
 
             const overlay = document.querySelector(`.${CSS_PREFIX}-dialog-overlay`) as HTMLElement | null;

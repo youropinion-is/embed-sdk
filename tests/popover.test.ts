@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import { postFromIframe } from "./helpers/messages.ts";
 import { setGlobalTheme } from "../src/core/theme-manager.ts";
 import { CSS_PREFIX } from "../src/core/utils.ts";
 import { createPopover } from "../src/surfaces/popover.ts";
@@ -205,12 +206,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { height: 400, autoGrow: true, autoShrink: false });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 600 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 600 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { panel } = getPanelElements();
@@ -224,12 +220,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { height: 400, autoGrow: true, autoShrink: false });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 200 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 200 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { panel } = getPanelElements();
@@ -243,12 +234,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { height: 400, autoGrow: true, autoShrink: true });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 200 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 200 });
             await new Promise((r) => setTimeout(r, 0));
 
             const { panel } = getPanelElements();
@@ -278,12 +264,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { waitForReady: true });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-ready", surveyId: "test/ch" });
 
             const { panel } = getPanelElements();
             assert.ok(panel, "panel element should exist");
@@ -315,12 +296,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { autoClose: 0 });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 0));
 
             const { panel } = getPanelElements();
@@ -333,12 +309,7 @@ describe("createPopover", () => {
             const handle = createPopover("test/ch", { autoClose: 10 });
             handle.open();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(getPanelElements().iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 50));
 
             const { panel } = getPanelElements();

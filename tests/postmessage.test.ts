@@ -3,15 +3,12 @@ import { afterEach, describe, it } from "node:test";
 import { createEmitter } from "../src/core/emitter.ts";
 import { createPostMessageBridge } from "../src/core/postmessage.ts";
 import type { EmbedEventMap } from "../src/types.ts";
+import { postFromIframe } from "./helpers/messages.ts";
 
 function makeIframe(): HTMLIFrameElement {
     const iframe = document.createElement("iframe");
     document.body.appendChild(iframe);
     return iframe;
-}
-
-function dispatch(data: object, origin = "https://share.youropinion.is") {
-    window.dispatchEvent(new window.MessageEvent("message", { data, origin }));
 }
 
 afterEach(() => {
@@ -31,15 +28,52 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
+            postFromIframe(iframe, { message: "survey-ready", surveyId: "test/ch" }, "https://evil.example.com");
+            await new Promise((r) => setTimeout(r, 0));
+
+            assert.ok(!fired, "event must not fire from unknown origin");
+            bridge.destroy();
+        });
+
+        it("ignores messages from another window at the allowed origin", async () => {
+            const iframe = makeIframe();
+            const other = makeIframe();
+            const emitter = createEmitter<EmbedEventMap>();
+            const bridge = createPostMessageBridge(iframe, "test/ch", emitter);
+            bridge.listen();
+
+            let fired = false;
+            emitter.on("ready", () => {
+                fired = true;
+            });
+
+            postFromIframe(other, { message: "survey-ready", surveyId: "test/ch" });
+            await new Promise((r) => setTimeout(r, 0));
+
+            assert.ok(!fired, "event must not fire from a window other than the bridge's iframe");
+            bridge.destroy();
+        });
+
+        it("ignores messages without a source window", async () => {
+            const iframe = makeIframe();
+            const emitter = createEmitter<EmbedEventMap>();
+            const bridge = createPostMessageBridge(iframe, "test/ch", emitter);
+            bridge.listen();
+
+            let fired = false;
+            emitter.on("ready", () => {
+                fired = true;
+            });
+
             window.dispatchEvent(
                 new window.MessageEvent("message", {
                     data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://evil.example.com",
+                    origin: "https://share.youropinion.is",
                 })
             );
             await new Promise((r) => setTimeout(r, 0));
 
-            assert.ok(!fired, "event must not fire from unknown origin");
+            assert.ok(!fired, "event must not fire when the message has no source");
             bridge.destroy();
         });
 
@@ -54,7 +88,7 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
-            dispatch({ message: "survey-ready", surveyId: "test/ch" });
+            postFromIframe(iframe, { message: "survey-ready", surveyId: "test/ch" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(fired, "event should fire from allowed origin");
@@ -72,12 +106,7 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://custom.example.com",
-                })
-            );
+            postFromIframe(iframe, { message: "survey-ready", surveyId: "test/ch" }, "https://custom.example.com");
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(fired, "custom domain should be accepted");
@@ -95,9 +124,9 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
-            dispatch("just a string");
-            dispatch(null as any);
-            dispatch(42 as any);
+            postFromIframe(iframe, "just a string");
+            postFromIframe(iframe, null);
+            postFromIframe(iframe, 42);
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(!fired, "non-object data must be ignored");
@@ -115,7 +144,7 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
-            dispatch({ message: "unknown-message-type", surveyId: "test/ch" });
+            postFromIframe(iframe, { message: "unknown-message-type", surveyId: "test/ch" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(!fired, "unknown message type must be ignored");
@@ -135,7 +164,7 @@ describe("createPostMessageBridge", () => {
                 payload = p;
             });
 
-            dispatch({ message: "survey-ready", surveyId: "test/ch" });
+            postFromIframe(iframe, { message: "survey-ready", surveyId: "test/ch" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -154,7 +183,7 @@ describe("createPostMessageBridge", () => {
                 payload = p;
             });
 
-            dispatch({ message: "survey-started", surveyId: "test/ch", responseId: "r1" });
+            postFromIframe(iframe, { message: "survey-started", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -173,7 +202,7 @@ describe("createPostMessageBridge", () => {
                 payload = p;
             });
 
-            dispatch({ message: "survey-completed", surveyId: "test/ch", responseId: "r2" });
+            postFromIframe(iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r2" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -192,7 +221,7 @@ describe("createPostMessageBridge", () => {
                 payload = p;
             });
 
-            dispatch({ message: "survey-question-changed", surveyId: "test/ch", ref: "q5" });
+            postFromIframe(iframe, { message: "survey-question-changed", surveyId: "test/ch", ref: "q5" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -211,7 +240,7 @@ describe("createPostMessageBridge", () => {
                 payload = p;
             });
 
-            dispatch({ message: "survey-height-changed", surveyId: "test/ch", height: 480 });
+            postFromIframe(iframe, { message: "survey-height-changed", surveyId: "test/ch", height: 480 });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -231,7 +260,7 @@ describe("createPostMessageBridge", () => {
             });
 
             // message without surveyId
-            dispatch({ message: "survey-ready" });
+            postFromIframe(iframe, { message: "survey-ready" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(payload !== null);
@@ -248,7 +277,7 @@ describe("createPostMessageBridge", () => {
             });
             bridge.listen();
 
-            dispatch({ message: "survey-completed", surveyId: "test/ch", responseId: "r3", allowEdits: false });
+            postFromIframe(iframe, { message: "survey-completed", surveyId: "test/ch", responseId: "r3", allowEdits: false });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(completedInfo !== null);
@@ -270,7 +299,7 @@ describe("createPostMessageBridge", () => {
                 fired = true;
             });
 
-            dispatch({ message: "survey-ready", surveyId: "test/ch" });
+            postFromIframe(iframe, { message: "survey-ready", surveyId: "test/ch" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(!fired, "no events should fire after destroy");

@@ -1,4 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>stackables/renovate-config"]
+  "extends": ["github>stackables/renovate-config"],
+  "packageRules": [
+    {
+      "description": "The test workflow (type check, tests, build) checks every update",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+  "lockFileMaintenance": {
+    "automerge": true
+  }
 }
