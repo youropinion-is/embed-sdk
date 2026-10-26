@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import { iframeWindow, postFromIframe, postFromWindow } from "./helpers/messages.ts";
 import { createWidget } from "../src/surfaces/widget.ts";
 
 function makeContainer(): HTMLDivElement {
@@ -112,12 +113,7 @@ describe("createWidget", () => {
             const container = makeContainer();
             const handle = createWidget("test/ch", { container });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 500 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-height-changed", surveyId: "test/ch", height: 500 });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.equal(container.style.height, "500px");
@@ -130,12 +126,7 @@ describe("createWidget", () => {
             container.style.height = "300px";
             const handle = createWidget("test/ch", { container, autoGrow: false, autoShrink: false });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 600 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-height-changed", surveyId: "test/ch", height: 600 });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.equal(container.style.height, "300px", "height must not change when autoGrow=false");
@@ -149,22 +140,12 @@ describe("createWidget", () => {
             const handle = createWidget("test/ch", { container, autoShrink: false });
 
             // Grow the widget to 400px first
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 400 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-height-changed", surveyId: "test/ch", height: 400 });
             await new Promise((r) => setTimeout(r, 0));
             assert.equal(container.style.height, "400px", "widget should grow to 400px");
 
             // Now try to shrink — autoShrink=false should block it
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 100 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-height-changed", surveyId: "test/ch", height: 100 });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.equal(container.style.height, "400px", "should not shrink when autoShrink=false");
@@ -207,12 +188,7 @@ describe("createWidget", () => {
             const handle = createWidget("test/ch", { container, waitForReady: true });
 
             // Only send ready — no heightChanged
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-ready", surveyId: "test/ch" });
 
             const iframe = container.querySelector("iframe") as HTMLIFrameElement;
             assert.equal(iframe.style.opacity, "0", "iframe must stay hidden until heightChanged also fires");
@@ -224,18 +200,8 @@ describe("createWidget", () => {
             const container = makeContainer();
             const handle = createWidget("test/ch", { container, waitForReady: true });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-height-changed", surveyId: "test/ch", height: 400 },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-ready", surveyId: "test/ch" });
+            postFromIframe(container.querySelector("iframe"), { message: "survey-height-changed", surveyId: "test/ch", height: 400 });
 
             const iframe = container.querySelector("iframe") as HTMLIFrameElement;
             assert.equal(iframe.style.opacity, "1");
@@ -264,12 +230,7 @@ describe("createWidget", () => {
                 received = p;
             });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "resp-1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-completed", surveyId: "test/ch", responseId: "resp-1" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(received !== null, "submit event should have fired");
@@ -287,12 +248,7 @@ describe("createWidget", () => {
                 fired = true;
             });
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-started", surveyId: "test/ch", responseId: "resp-1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-started", surveyId: "test/ch", responseId: "resp-1" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(fired, "started event should have fired");
@@ -311,12 +267,7 @@ describe("createWidget", () => {
             handle.on("ready", listener);
             handle.off("ready", listener);
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-ready", surveyId: "test/ch" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromIframe(container.querySelector("iframe"), { message: "survey-ready", surveyId: "test/ch" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.equal(count, 0, "listener should not fire after off()");
@@ -354,14 +305,11 @@ describe("createWidget", () => {
                 fired = true;
             });
 
+            // The window the survey posted from while mounted
+            const source = iframeWindow(container.querySelector("iframe"));
             handle.unmount();
 
-            window.dispatchEvent(
-                new window.MessageEvent("message", {
-                    data: { message: "survey-completed", surveyId: "test/ch", responseId: "r1" },
-                    origin: "https://share.youropinion.is",
-                })
-            );
+            postFromWindow(source, { message: "survey-completed", surveyId: "test/ch", responseId: "r1" });
             await new Promise((r) => setTimeout(r, 0));
 
             assert.ok(!fired, "submit must not fire after unmount()");
