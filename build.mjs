@@ -12,7 +12,7 @@ const sharedConfig = {
     bundle: true,
     minify: true,
     sourcemap: true,
-    target: ["es2020", "chrome80", "firefox80", "safari14", "edge80"],
+    target: ["es2020", "chrome80", "firefox80", "safari14.1", "edge80"],
     platform: "browser",
     logLevel: "info",
 };
