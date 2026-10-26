@@ -35,7 +35,7 @@
     "tsc": "tsc --noEmit",
     "test": "node --import tsx --import global-jsdom/register --test 'tests/**/*.test.ts'",
     "prepublishOnly": "pnpm run build",
-    "ci:publish": "changeset tag && pnpm publish"
+    "ci:publish": "changeset publish"
   },
   "peerDependencies": {
     "react": ">=18"
