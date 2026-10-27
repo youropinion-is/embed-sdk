@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      # pnpm and the node of .nvmrc in one action, as in monocore and factory. It runs the frozen install too.
+      # pnpm and the node of .nvmrc in one action. It runs the frozen install too.
       - uses: pnpm/setup@v3
         with:
           cache: true

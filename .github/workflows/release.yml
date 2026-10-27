@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code repository
         uses: actions/checkout@v7
 
-      # pnpm and the node of .nvmrc in one action, as in monocore and factory. It runs the frozen install too.
+      # pnpm and the node of .nvmrc in one action. It runs the frozen install too.
       - name: Setup pnpm and node.js
         uses: pnpm/setup@v3
         with:
