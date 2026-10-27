@@ -11,8 +11,7 @@
  */
 
 import { createModalBehavior } from "../core/modal-behavior.ts";
-import { getGlobalTheme, onGlobalThemeChange } from "../core/theme-manager.ts";
-import { resolveTheme } from "../core/theme.ts";
+import { getGlobalTheme, onGlobalThemeChange, resolveTheme } from "../core/theme-manager.ts";
 import { CSS_PREFIX, Z_INDEX, injectStyles, toCss } from "../core/utils.ts";
 import type { ModalHandle, PopoverOptions } from "../types.ts";
 

@@ -14,12 +14,8 @@ import {
   createPostMessageBridge,
   type PostMessageBridge,
 } from "./postmessage.ts";
-import { getGlobalTheme } from "./theme-manager.ts";
-import {
-  createThemeController,
-  resolveTheme,
-  type ThemeController,
-} from "./theme.ts";
+import { getGlobalTheme, resolveTheme } from "./theme-manager.ts";
+import { createThemeController, type ThemeController } from "./theme.ts";
 
 const DEFAULT_DOMAIN = "https://share.youropinion.is";
 

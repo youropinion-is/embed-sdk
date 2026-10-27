@@ -15,14 +15,14 @@
 import type { EmbedEventMap } from "../types.ts";
 import type { Emitter } from "./emitter.ts";
 
-export type IncomingMessageType =
+type IncomingMessageType =
   | "survey-ready"
   | "survey-started"
   | "survey-completed"
   | "survey-question-changed"
   | "survey-height-changed";
 
-export interface IncomingMessage {
+interface IncomingMessage {
   message: IncomingMessageType;
   surveyId?: string;
   responseId?: string;

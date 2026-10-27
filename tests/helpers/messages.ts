@@ -1,5 +1,5 @@
 /** The origin the SDK expects survey messages from when no custom domain is set. */
-export const SURVEY_ORIGIN = "https://share.youropinion.is";
+const SURVEY_ORIGIN = "https://share.youropinion.is";
 
 /** The window of an iframe the SDK created; fails the test when the iframe is not in the document. */
 export function iframeWindow(iframe: HTMLIFrameElement | null | undefined): Window {

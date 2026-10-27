@@ -22,5 +22,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm tsc
+      # Dead code and unused dependencies (knip.ts): with the tests, and without them.
+      - run: pnpm knip
+      - run: pnpm knip --production
       - run: pnpm test
       - run: pnpm build
