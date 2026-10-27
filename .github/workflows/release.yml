@@ -24,24 +24,19 @@ jobs:
       - name: Checkout code repository
         uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
+      # pnpm and the node of .nvmrc in one action, as in monocore and factory. It runs the frozen install too.
+      - name: Setup pnpm and node.js
+        uses: pnpm/setup@v3
         with:
-          node-version: "24"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
+          cache: true
+          require-lockfile: true
 
       - name: Create and publish versions
-        uses: changesets/action@v1
+        # v2 has no major tag. Its inputs are v1's renamed, and it reads the token only from github-token.
+        uses: changesets/action@v2.1.2
         with:
-          commit: "chore: update versions"
-          title: "chore: update versions"
-          publish: pnpm ci:publish
-          createGithubReleases: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update versions"
+          pr-title: "chore: update versions"
+          publish-script: pnpm ci:publish
+          create-github-releases: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
