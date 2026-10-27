@@ -14,8 +14,7 @@
  *   const btn = createButton(dialog, { position: 'right', text: 'Feedback' })
  */
 
-import { getGlobalTheme, onGlobalThemeChange } from "../core/theme-manager.ts";
-import { resolveTheme } from "../core/theme.ts";
+import { getGlobalTheme, onGlobalThemeChange, resolveTheme } from "../core/theme-manager.ts";
 import { createTriggerMixin } from "../core/trigger-mixin.ts";
 import { contrastColor, CSS_PREFIX, injectStyles, Z_INDEX } from "../core/utils.ts";
 import type { ButtonHandle, ButtonOptions, ButtonTriggerAction, ButtonTriggerConfig, ModalHandle } from "../types.ts";

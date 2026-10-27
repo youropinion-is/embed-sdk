@@ -9,7 +9,7 @@
 
 import type { ThemeMode } from "../types.ts";
 import type { PostMessageBridge } from "./postmessage.ts";
-import { getGlobalTheme, registerController, unregisterController } from "./theme-manager.ts";
+import { getGlobalTheme, registerController, resolveTheme, unregisterController } from "./theme-manager.ts";
 
 export interface ThemeController {
     /** Get the current resolved theme ('light' or 'dark'). */
@@ -23,18 +23,6 @@ export interface ThemeController {
 
     /** Stop listening and clean up. */
     destroy(): void;
-}
-
-/**
- * Resolve a ThemeMode to a concrete 'light' or 'dark' value.
- */
-export function resolveTheme(mode: ThemeMode | undefined): "light" | "dark" {
-    if (mode === "light" || mode === "dark") return mode;
-    // auto or undefined: detect from system
-    if (typeof window !== "undefined" && window.matchMedia) {
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    return "light";
 }
 
 /**

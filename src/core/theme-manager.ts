@@ -6,11 +6,23 @@
  */
 
 import type { ThemeMode } from "../types.ts";
-import { resolveTheme, type ThemeController } from "./theme.ts";
+import type { ThemeController } from "./theme.ts";
 
 let globalThemeMode: ThemeMode = "auto";
 const controllers = new Set<ThemeController>();
 const listeners = new Set<(resolved: "light" | "dark") => void>();
+
+/**
+ * Resolve a ThemeMode to a concrete 'light' or 'dark' value.
+ */
+export function resolveTheme(mode: ThemeMode | undefined): "light" | "dark" {
+    if (mode === "light" || mode === "dark") return mode;
+    // auto or undefined: detect from system
+    if (typeof window !== "undefined" && window.matchMedia) {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return "light";
+}
 
 /** Get the current global theme mode. */
 export function getGlobalTheme(): ThemeMode {

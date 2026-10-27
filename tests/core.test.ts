@@ -61,14 +61,14 @@ describe("@youropinion/embed", () => {
 
     describe("resolveTheme", () => {
         it("should return light or dark for explicit values", async () => {
-            const { resolveTheme } = await import("../src/core/theme.ts");
+            const { resolveTheme } = await import("../src/core/theme-manager.ts");
 
             assert.equal(resolveTheme("light"), "light");
             assert.equal(resolveTheme("dark"), "dark");
         });
 
         it("should return light as default when window.matchMedia is unavailable", async () => {
-            const { resolveTheme } = await import("../src/core/theme.ts");
+            const { resolveTheme } = await import("../src/core/theme-manager.ts");
 
             // In Node.js, there's no matchMedia, so it falls back to 'light'
             assert.equal(resolveTheme("auto"), "light");
