@@ -175,7 +175,7 @@ describe("createPopover", () => {
 
             const { panel } = getPanelElements();
             assert.ok(panel, "panel element should exist");
-            assert.equal(panel.style.maxHeight, "calc(100vh - 60px)");
+            assert.equal(panel.style.maxHeight, "calc(-60px + 100vh)");
 
             handle.unmount();
         });
